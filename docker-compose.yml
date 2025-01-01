@@ -1,0 +1,52 @@
+services:
+  jenkins:
+    build: 
+      context: .
+      dockerfile: controller/Dockerfile
+    image: mohamedelkony/jenkins_controller:1.0
+    restart: on-failure
+    privileged: true
+    # temp untitl jenkins controller connects to AWS to deploy infrasutucture
+    # currently it needs root to connect to docker dameon of host to deploy infrasutucture
+    user: root
+    ports:
+      - 8080:8080
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    container_name: jenkins
+
+  agent_debian_jdk21_docker_2core_4g:
+    #container_name: agent_debian_jdk21_docker_2core_4g
+    build:
+      context: .
+      dockerfile: agent/Dockerfile
+    image: mohamedelkony/agent_debian_jdk21_docker_sudo:1.0
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCbhE50rYxBBG98m1D5szgv0gnDOVXWgk1zaPmY2FWlsXwwahlk81xAvNx1g/7DsZdFDDTrCUblEe6VdpvaNMDmVCNRHNCO0q/h9/N5KfgGOnyzjhZupHR1C2n/RyxxIpBUw69oH5UdwaztRKo2J3Dmob1hKkQ/YONwNZ4npudnNkHMCP0iOZjOdz9JVvO+x0B7CgJTioNWVCnncEBuC9XlXhhVOgBcqwtGg0+QAI2fKgKMhzTQhjozil4jP1vHozc0Mvso0u/S+LsuFQPnkbwPgPv+5Y2U5VovzgJ+kMLZL6okXmoACUHQOjSsafeyfsc4muUtOoeuVtGTpOz4GE3S0GO8s6z3KY4uuqZ+LoDkOTb3SFH8z/NujnT54rV4QjuLH8i6jdLRuTti9RrHj2KhDOVqDR7xn5AOdKlVWToEpka8PydcInqP/0Ql2Qn+RtJddLN51CVpiWlvPu71rDYasZLm1fNkKj4D3ib60SQIJKT6dh0BUkpAi7iuX7vhsypIwYuMD0ByLFzYQ77GGXUyN03ygN/QAvIM6+XUGeCHQLDPXDNAk1M9W14lQ59WP8Mak5TgKrjymIA0N1X8OywY2eMnve74BDG7kaPq2p9SGMTOdeDHbgd3NuWWxrQH4oXlB2l+qVkRiKEtKO+efUxnZK/occNYizwdtxjv65KEQw== konykony22@gmail.com
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: "4g"
+    restart: on-failure
+  agent_debian_jdk21_docker_4core_6g:
+    extends:
+      service: agent_debian_jdk21_docker_2core_4g
+    #container_name: agent_debian_jdk21_docker_4core_6g
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: "6g"
+  agent_debian_jdk21_docker_8core_8g:
+    extends:
+      service: agent_debian_jdk21_docker_2core_4g
+    #container_name: agent_debian_jdk21_docker_8core_8g
+    deploy:
+      resources:
+        limits:
+          cpus: "8.0"
+          memory: "8g"
+volumes:
+  jenkins_home:

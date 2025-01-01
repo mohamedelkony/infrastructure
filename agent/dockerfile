@@ -1,0 +1,17 @@
+# Extend the jenkins/ssh-agent image
+FROM jenkins/ssh-agent:latest-debian-jdk21 AS agent_debian_jdk21_sudo
+# Set non-interactive mode to avoid prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y sudo iproute2 curl htop && apt-get clean
+
+# Add the jenkins user to the sudoers group and allow passwordless sudo
+RUN echo "jenkins ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/jenkins && \
+    chmod 0440 /etc/sudoers.d/jenkins
+
+FROM agent_debian_jdk21_sudo AS agent_debian_jdk21_docker_sudo
+
+# Install Docker
+COPY install_docker.sh /tmp/install_docker.sh
+USER root
+RUN chmod +x /tmp/install_docker.sh && /tmp/install_docker.sh

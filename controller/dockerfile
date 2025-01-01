@@ -1,0 +1,8 @@
+FROM jenkins/jenkins:lts AS jenkins_controller_docker
+# Install Docker
+USER root
+COPY install_docker.sh /tmp/install_docker.sh
+RUN chmod +x /tmp/install_docker.sh && /tmp/install_docker.sh
+USER jenkins
+
+COPY . /deploy
