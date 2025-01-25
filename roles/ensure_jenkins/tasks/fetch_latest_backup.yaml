@@ -1,0 +1,57 @@
+- name: Ensure destination directory exists
+  file:
+    path: "{{ JENKINS_BACKUP }}"
+    state: directory
+    mode: '0755'
+
+- name: Install Git LFS
+  become: true
+  apt:
+    name: git-lfs
+    state: present
+    update_cache: yes
+
+- name: Clone the GitHub repository
+  git:
+    repo: "{{ github_repo }}"
+    dest: "/tmp/infrastructure"
+    version: "{{ branch }}"
+    force: yes
+    depth: 1
+
+- name: Copy the backup file from the repository
+  copy:
+    src: "/tmp/infrastructure/{{ file_path }}"
+    dest: "/tmp/jenkins_jenkins_home.tar.gz"
+    remote_src: yes
+
+# The used AMI doesn't have tar installed
+- name: Install need packages for unarchive
+  become: true
+  apt:
+    name:
+      - tar
+      - gzip
+      - unzip
+      - bzip2
+      - xz-utils
+      - zstd      
+    state: present
+
+- name: Unpack the backup file
+  unarchive:
+    src: "/tmp/jenkins_jenkins_home.tar.gz"
+    dest: "{{ JENKINS_BACKUP }}"
+    remote_src: yes
+
+- name: Clean up temporary files
+  file:
+    path: "/tmp/infrastructure"
+    state: absent
+  when: cleanup | default(true) | bool
+
+- name: Clean up the downloaded tar.gz file
+  file:
+    path: "/tmp/jenkins_jenkins_home.tar.gz"
+    state: absent
+  when: cleanup | default(true) | bool

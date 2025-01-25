@@ -1,0 +1,17 @@
+- name: Provision EC2 instance and configure Docker
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - role: roles/terraform_provision
+
+- name: Configure Docker on provisioned EC2 instance
+  hosts: Jenkins_ec2_instances
+  become: true
+  roles:
+    - role: roles/ensure_docker
+
+- name: Run Jenkins controller
+  hosts: Jenkins_ec2_instances
+  become: false
+  roles:
+    - role: roles/ensure_jenkins

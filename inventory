@@ -1,0 +1,5 @@
+[localhost]
+localhost ansible_connection=local
+
+[static-aws-ec2]  # For testing
+AWS-jenkins ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/AWS_Jenkins_controller_key.pem

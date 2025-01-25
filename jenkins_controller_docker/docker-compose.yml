@@ -1,0 +1,18 @@
+services:
+  jenkins:
+    build: 
+      context: ./.
+      dockerfile: dockerfile
+    image: konx/jenkins_ansible_terraform:1.0
+    container_name: jenkins
+    ports:
+      - 80:8080
+    volumes:
+      - ${JENKINS_BACKUP}:/var/jenkins_home
+    restart: on-failure
+
+  # 1] create custom image that contain ansible and terraform installed to run ansible playbooks from contrller !!!! Done
+  # 2] recheck PR then should agent EC2 is created 
+  # 3] Try connect it as agent to jenkins controller
+  # 4] Add agent via pipeline script
+  # 5] build app on agent

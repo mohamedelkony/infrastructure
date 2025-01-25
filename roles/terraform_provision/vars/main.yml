@@ -1,0 +1,3 @@
+terraform_config_dir: "jenkins_controller_terraform"
+private_key_path: ~/.ssh/AWS_Jenkins_controller_key.pem
+terraform_work_dir: /tmp/terraform-work-dir

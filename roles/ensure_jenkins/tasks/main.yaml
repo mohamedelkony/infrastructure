@@ -1,0 +1,15 @@
+- name: Copy docker folder
+  ansible.builtin.copy:
+    src: "jenkins_controller_docker/"
+    dest: "~/jenkins_docker"
+
+#- name: fetch latest jenkins server backup
+#  ansible.builtin.include_tasks: fetch_latest_backup.yaml
+# using snapshot for now
+- name: Start Jenkins controller
+  ansible.builtin.shell: |
+    docker compose up -d
+  args:
+    chdir: "~/jenkins_docker"
+    environment:
+      JENKINS_BACKUP: "{{ JENKINS_BACKUP }}"

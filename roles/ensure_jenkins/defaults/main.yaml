@@ -1,0 +1,4 @@
+github_repo: "https://github.com/mohamedelkony/infrastructure.git"
+branch: "main"
+file_path: "controller/jenkins_jenkins_home.tar.gz"
+JENKINS_BACKUP: "~/jenkins/latest_backup"

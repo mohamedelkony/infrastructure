@@ -1,0 +1,8 @@
+- name: Provision EC2 instance and configure Docker
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Destroy infrastructure
+      command: terraform destroy -auto-approve
+      args:
+        chdir: "terraform"
